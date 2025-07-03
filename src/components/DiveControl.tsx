@@ -77,13 +77,18 @@ export default function DiveControl() {
       return;
     }
 
-    const headers = ['Equipe', 'Mergulhador A', 'Mergulhador B', 'Mergulhador C', 'Tipo de Atividade', 'Data', 'Horário de Início', 'Horário de Término', 'Duração'];
-    const csvContent = [
-      headers.join(','),
-      ...diveRecords.map(record => 
-        [record.teamName, record.diverA, record.diverB, record.diverC, record.activityType, record.date, record.startTime, record.endTime, record.duration].join(',')
-      )
-    ].join('\n');
+    const headers = ['Equipe', 'Mergulhador', 'Tipo de Atividade', 'Data', 'Horário de Início', 'Horário de Término', 'Duração'];
+    const csvRows = [];
+    
+    // Criar uma linha para cada mergulhador
+    diveRecords.forEach(record => {
+      const divers = [record.diverA, record.diverB, record.diverC].filter(diver => diver.trim());
+      divers.forEach(diver => {
+        csvRows.push([record.teamName, diver, record.activityType, record.date, record.startTime, record.endTime, record.duration].join(','));
+      });
+    });
+    
+    const csvContent = [headers.join(','), ...csvRows].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
