@@ -1,0 +1,25 @@
+{
+  "name": "DiveControl 1.0 - Sistema de Controle de Mergulhos Militares",
+  "short_name": "DiveControl",
+  "description": "Sistema militar para controle de tempo de mergulho de equipes táticas",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0b",
+  "theme_color": "#d4af37",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/lovable-uploads/7032a47b-eff7-4654-889f-3d26c95cb414.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/lovable-uploads/7032a47b-eff7-4654-889f-3d26c95cb414.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "lang": "pt-BR"
+}

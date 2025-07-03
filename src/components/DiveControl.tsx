@@ -1,8 +1,11 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 import DiveTimer from "./DiveTimer";
 import DiveControlTable from "./DiveControlTable";
+import InstallPrompt from "./InstallPrompt";
+import UpdateNotification from "./UpdateNotification";
 import { Save } from "lucide-react";
 
 interface DiveData {
@@ -30,7 +33,7 @@ interface DiveRecord {
 }
 
 export default function DiveControl() {
-  const [diveRecords, setDiveRecords] = useState<DiveRecord[]>([]);
+  const [diveRecords, setDiveRecords, clearDiveRecords] = useLocalStorage<DiveRecord[]>('divecontrol-records', []);
   const { toast } = useToast();
   const timerRefs = useRef<Array<{ resetAllData: () => void } | null>>([null, null, null, null]);
 
@@ -109,7 +112,7 @@ export default function DiveControl() {
   };
 
   const clearRecords = () => {
-    setDiveRecords([]);
+    clearDiveRecords();
     // Reset all timers
     timerRefs.current.forEach(timerRef => {
       if (timerRef) {
@@ -125,6 +128,9 @@ export default function DiveControl() {
 
   return (
     <div className="min-h-screen bg-gradient-tactical p-4">
+      <InstallPrompt />
+      <UpdateNotification />
+      
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8">
         <div className="flex items-center justify-between mb-6 flex-col md:flex-row gap-4">
