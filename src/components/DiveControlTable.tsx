@@ -78,7 +78,48 @@ export default function DiveControlTable({ records, onExportCSV, onClearRecords 
       
       <CardContent>
         <div className="rounded-md border border-military-gold/20 overflow-hidden">
-          <Table>
+          {/* Mobile View */}
+          <div className="block md:hidden">
+            {records.length === 0 ? (
+              <div className="text-center text-muted-foreground py-8 px-4">
+                Nenhum registro de mergulho encontrado
+              </div>
+            ) : (
+              <div className="space-y-4 p-4">
+                {records.map((record) => (
+                  <div key={record.id} className="bg-muted/20 rounded-lg p-4 space-y-2">
+                    <div className="flex justify-between items-start">
+                      <div className="font-medium text-military-gold">{record.teamName}</div>
+                      <div className="text-sm text-muted-foreground">{record.date}</div>
+                    </div>
+                    <div className="text-sm">
+                      <div className="text-foreground mb-1">
+                        <span className="text-muted-foreground">Mergulhadores:</span> {[record.diverA, record.diverB, record.diverC].filter(diver => diver.trim()).join(' / ')}
+                      </div>
+                      <div className="text-foreground mb-1">
+                        <span className="text-muted-foreground">Atividade:</span> {record.activityType}
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Início:</span>
+                        <span className="text-foreground">{record.startTime}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Término:</span>
+                        <span className="text-foreground">{record.endTime}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Duração:</span>
+                        <span className="text-foreground font-mono">{record.duration}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Desktop Table View */}
+          <Table className="hidden md:table">
             <TableHeader>
               <TableRow className="bg-military-blue/20 hover:bg-military-blue/30">
                 <TableHead className="text-military-gold font-semibold">Equipe</TableHead>

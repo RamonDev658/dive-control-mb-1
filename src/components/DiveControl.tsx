@@ -150,7 +150,7 @@ export default function DiveControl() {
             variant="tactical"
             size="xl"
             onClick={exportToCSV}
-            className="min-w-[150px] order-1 md:order-2"
+            className="min-w-[150px] order-1 md:order-2 hidden md:flex"
           >
             <Save className="w-5 h-5" />
             SALVAR MG
