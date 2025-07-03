@@ -14,14 +14,20 @@ interface DiveData {
   startTime: Date;
   endTime: Date;
   duration: number;
-  diver: string;
+  diverA: string;
+  diverB: string;
+  diverC: string;
+  activityType: string;
 }
 
 export default function DiveTimer({ teamId, initialTime, onDiveComplete }: DiveTimerProps) {
-  const [timeLeft, setTimeLeft] = useState(initialTime);
+  const [elapsedTime, setElapsedTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [startTime, setStartTime] = useState<Date | null>(null);
-  const [diver, setDiver] = useState("Mergulhador A");
+  const [diverA, setDiverA] = useState("Mergulhador A");
+  const [diverB, setDiverB] = useState("Mergulhador B");
+  const [diverC, setDiverC] = useState("Mergulhador C");
+  const [activityType, setActivityType] = useState("Patrulhamento");
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const formatTime = (seconds: number) => {
@@ -42,14 +48,16 @@ export default function DiveTimer({ teamId, initialTime, onDiveComplete }: DiveT
     if (isRunning && startTime) {
       setIsRunning(false);
       const endTime = new Date();
-      const duration = initialTime - timeLeft;
       
       onDiveComplete({
         teamName: teamId,
         startTime,
         endTime,
-        duration,
-        diver
+        duration: elapsedTime,
+        diverA,
+        diverB,
+        diverC,
+        activityType
       });
 
       if (intervalRef.current) {
@@ -60,7 +68,7 @@ export default function DiveTimer({ teamId, initialTime, onDiveComplete }: DiveT
 
   const resetTimer = () => {
     setIsRunning(false);
-    setTimeLeft(initialTime);
+    setElapsedTime(0);
     setStartTime(null);
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
@@ -68,15 +76,9 @@ export default function DiveTimer({ teamId, initialTime, onDiveComplete }: DiveT
   };
 
   useEffect(() => {
-    if (isRunning && timeLeft > 0) {
+    if (isRunning) {
       intervalRef.current = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            setIsRunning(false);
-            return 0;
-          }
-          return prev - 1;
-        });
+        setElapsedTime(prev => prev + 1);
       }, 1000);
     } else {
       if (intervalRef.current) {
@@ -89,10 +91,11 @@ export default function DiveTimer({ teamId, initialTime, onDiveComplete }: DiveT
         clearInterval(intervalRef.current);
       }
     };
-  }, [isRunning, timeLeft]);
+  }, [isRunning]);
 
-  // Calculate progress for circular timer
-  const progress = ((initialTime - timeLeft) / initialTime) * 100;
+  // Calculate progress for circular timer (progressive)
+  const maxDisplayTime = 3600; // 1 hour max display
+  const progress = Math.min((elapsedTime / maxDisplayTime) * 100, 100);
   const circumference = 2 * Math.PI * 90; // radius = 90
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
@@ -104,14 +107,37 @@ export default function DiveTimer({ teamId, initialTime, onDiveComplete }: DiveT
           {teamId}
         </div>
 
-        {/* Diver Input */}
-        <input
-          type="text"
-          value={diver}
-          onChange={(e) => setDiver(e.target.value)}
-          className="w-full px-3 py-2 bg-muted border border-border rounded text-center text-foreground"
-          placeholder="Nome do Mergulhador"
-        />
+        {/* Diver Inputs */}
+        <div className="space-y-2">
+          <input
+            type="text"
+            value={diverA}
+            onChange={(e) => setDiverA(e.target.value)}
+            className="w-full px-3 py-2 bg-muted border border-border rounded text-center text-foreground text-sm"
+            placeholder="Mergulhador A"
+          />
+          <input
+            type="text"
+            value={diverB}
+            onChange={(e) => setDiverB(e.target.value)}
+            className="w-full px-3 py-2 bg-muted border border-border rounded text-center text-foreground text-sm"
+            placeholder="Mergulhador B"
+          />
+          <input
+            type="text"
+            value={diverC}
+            onChange={(e) => setDiverC(e.target.value)}
+            className="w-full px-3 py-2 bg-muted border border-border rounded text-center text-foreground text-sm"
+            placeholder="Mergulhador C"
+          />
+          <input
+            type="text"
+            value={activityType}
+            onChange={(e) => setActivityType(e.target.value)}
+            className="w-full px-3 py-2 bg-muted border border-border rounded text-center text-foreground text-sm"
+            placeholder="Tipo de Atividade"
+          />
+        </div>
 
         {/* Circular Timer */}
         <div className="relative w-48 h-48 mx-auto">
@@ -147,10 +173,10 @@ export default function DiveTimer({ teamId, initialTime, onDiveComplete }: DiveT
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
               <div className={`text-2xl font-mono font-bold text-foreground ${isRunning ? 'animate-tactical-pulse' : ''}`}>
-                {formatTime(timeLeft)}
+                {formatTime(elapsedTime)}
               </div>
               <div className="text-sm text-muted-foreground">
-                {isRunning ? 'MERGULHANDO' : timeLeft === 0 ? 'TEMPO ESGOTADO' : 'PRONTO'}
+                {isRunning ? 'MERGULHANDO' : 'PRONTO'}
               </div>
             </div>
           </div>
@@ -162,7 +188,7 @@ export default function DiveTimer({ teamId, initialTime, onDiveComplete }: DiveT
             variant="militaryStart"
             size="lg"
             onClick={startTimer}
-            disabled={isRunning || timeLeft === 0}
+            disabled={isRunning}
             className="min-w-[100px]"
           >
             <Play className="w-5 h-5" />

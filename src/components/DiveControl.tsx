@@ -10,13 +10,19 @@ interface DiveData {
   startTime: Date;
   endTime: Date;
   duration: number;
-  diver: string;
+  diverA: string;
+  diverB: string;
+  diverC: string;
+  activityType: string;
 }
 
 interface DiveRecord {
   id: string;
   teamName: string;
-  diver: string;
+  diverA: string;
+  diverB: string;
+  diverC: string;
+  activityType: string;
   date: string;
   startTime: string;
   endTime: string;
@@ -41,7 +47,10 @@ export default function DiveControl() {
     const newRecord: DiveRecord = {
       id: Date.now().toString(),
       teamName: data.teamName,
-      diver: data.diver,
+      diverA: data.diverA,
+      diverB: data.diverB,
+      diverC: data.diverC,
+      activityType: data.activityType,
       date: data.startTime.toLocaleDateString('pt-BR'),
       startTime: data.startTime.toLocaleTimeString('pt-BR'),
       endTime: data.endTime.toLocaleTimeString('pt-BR'),
@@ -52,7 +61,7 @@ export default function DiveControl() {
     
     toast({
       title: "Mergulho Registrado",
-      description: `${data.teamName} - ${data.diver} completou o mergulho`,
+      description: `${data.teamName} - ${data.activityType} completou o mergulho`,
       duration: 3000,
     });
   };
@@ -68,11 +77,11 @@ export default function DiveControl() {
       return;
     }
 
-    const headers = ['Equipe', 'Mergulhador(es)', 'Data', 'Horário de Início', 'Horário de Término', 'Duração'];
+    const headers = ['Equipe', 'Mergulhador A', 'Mergulhador B', 'Mergulhador C', 'Tipo de Atividade', 'Data', 'Horário de Início', 'Horário de Término', 'Duração'];
     const csvContent = [
       headers.join(','),
       ...diveRecords.map(record => 
-        [record.teamName, record.diver, record.date, record.startTime, record.endTime, record.duration].join(',')
+        [record.teamName, record.diverA, record.diverB, record.diverC, record.activityType, record.date, record.startTime, record.endTime, record.duration].join(',')
       )
     ].join('\n');
 
@@ -106,21 +115,30 @@ export default function DiveControl() {
     <div className="min-h-screen bg-gradient-tactical p-4">
       {/* Header */}
       <div className="max-w-7xl mx-auto mb-8">
-        <div className="flex items-center justify-between mb-6">
-          <div className="text-center flex-1">
-            <h1 className="text-4xl font-bold text-foreground drop-shadow-lg mb-2">
-              DIVECONTROL_1.0
-            </h1>
-            <p className="text-lg text-foreground/80 drop-shadow">
-              Sistema de Controle de Mergulhos Militares
-            </p>
+        <div className="flex items-center justify-between mb-6 flex-col md:flex-row gap-4">
+          <div className="text-center flex-1 order-2 md:order-1">
+            <div className="flex items-center justify-center gap-4 mb-2 flex-col md:flex-row">
+              <img 
+                src="/lovable-uploads/7032a47b-eff7-4654-889f-3d26c95cb414.png" 
+                alt="DiveControl Logo" 
+                className="w-16 h-16 md:w-20 md:h-20"
+              />
+              <div className="text-center md:text-left">
+                <h1 className="text-3xl md:text-4xl font-bold text-foreground drop-shadow-lg mb-1">
+                  DIVECONTROL_1.0
+                </h1>
+                <p className="text-base md:text-lg text-foreground/80 drop-shadow">
+                  Sistema de Controle de Mergulhos Militares
+                </p>
+              </div>
+            </div>
           </div>
           
           <Button
             variant="tactical"
             size="xl"
             onClick={exportToCSV}
-            className="min-w-[150px]"
+            className="min-w-[150px] order-1 md:order-2"
           >
             <Save className="w-5 h-5" />
             SALVAR MG

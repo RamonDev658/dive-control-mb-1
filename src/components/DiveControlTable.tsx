@@ -6,7 +6,10 @@ import { Download, Trash2 } from "lucide-react";
 interface DiveRecord {
   id: string;
   teamName: string;
-  diver: string;
+  diverA: string;
+  diverB: string;
+  diverC: string;
+  activityType: string;
   date: string;
   startTime: string;
   endTime: string;
@@ -56,7 +59,10 @@ export default function DiveControlTable({ records, onExportCSV, onClearRecords 
             <TableHeader>
               <TableRow className="bg-military-blue/20 hover:bg-military-blue/30">
                 <TableHead className="text-military-gold font-semibold">Equipe</TableHead>
-                <TableHead className="text-military-gold font-semibold">Mergulhador(es)</TableHead>
+                <TableHead className="text-military-gold font-semibold">Mergulhador A</TableHead>
+                <TableHead className="text-military-gold font-semibold">Mergulhador B</TableHead>
+                <TableHead className="text-military-gold font-semibold">Mergulhador C</TableHead>
+                <TableHead className="text-military-gold font-semibold">Atividade</TableHead>
                 <TableHead className="text-military-gold font-semibold">Data</TableHead>
                 <TableHead className="text-military-gold font-semibold">Início</TableHead>
                 <TableHead className="text-military-gold font-semibold">Término</TableHead>
@@ -66,7 +72,7 @@ export default function DiveControlTable({ records, onExportCSV, onClearRecords 
             <TableBody>
               {records.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={9} className="text-center text-muted-foreground py-8">
                     Nenhum registro de mergulho encontrado
                   </TableCell>
                 </TableRow>
@@ -77,7 +83,10 @@ export default function DiveControlTable({ records, onExportCSV, onClearRecords 
                     className="hover:bg-muted/30 border-border/50"
                   >
                     <TableCell className="font-medium text-foreground">{record.teamName}</TableCell>
-                    <TableCell className="text-foreground">{record.diver}</TableCell>
+                    <TableCell className="text-foreground">{record.diverA}</TableCell>
+                    <TableCell className="text-foreground">{record.diverB}</TableCell>
+                    <TableCell className="text-foreground">{record.diverC}</TableCell>
+                    <TableCell className="text-foreground">{record.activityType}</TableCell>
                     <TableCell className="text-foreground">{record.date}</TableCell>
                     <TableCell className="text-foreground">{record.startTime}</TableCell>
                     <TableCell className="text-foreground">{record.endTime}</TableCell>
