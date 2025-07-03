@@ -52,6 +52,13 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				// Military Color System
+				military: {
+					start: 'hsl(var(--military-start))',
+					stop: 'hsl(var(--military-stop))',
+					gold: 'hsl(var(--military-gold))',
+					blue: 'hsl(var(--military-blue))'
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -84,11 +91,35 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'tactical-pulse': {
+					'0%, 100%': {
+						opacity: '1',
+						transform: 'scale(1)'
+					},
+					'50%': {
+						opacity: '0.8',
+						transform: 'scale(1.02)'
+					}
+				},
+				'timer-tick': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'tactical-pulse': 'tactical-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+				'timer-tick': 'timer-tick 1s linear infinite'
+			},
+			backgroundImage: {
+				'gradient-tactical': 'var(--gradient-tactical)',
+				'gradient-command': 'var(--gradient-command)'
+			},
+			boxShadow: {
+				'tactical': 'var(--shadow-tactical)',
+				'command': 'var(--shadow-command)'
 			}
 		}
 	},
