@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import DiveTimer from "./DiveTimer";
@@ -32,6 +32,7 @@ interface DiveRecord {
 export default function DiveControl() {
   const [diveRecords, setDiveRecords] = useState<DiveRecord[]>([]);
   const { toast } = useToast();
+  const timerRefs = useRef<Array<{ resetAllData: () => void } | null>>([null, null, null, null]);
 
   // Initial timer setting: 54 minutes and 45 seconds
   const initialTime = 54 * 60 + 45; // 3285 seconds
@@ -109,9 +110,15 @@ export default function DiveControl() {
 
   const clearRecords = () => {
     setDiveRecords([]);
+    // Reset all timers
+    timerRefs.current.forEach(timerRef => {
+      if (timerRef) {
+        timerRef.resetAllData();
+      }
+    });
     toast({
       title: "Registros Limpos",
-      description: "Todos os registros foram removidos",
+      description: "Todos os registros e dados dos mergulhadores foram removidos",
       duration: 3000,
     });
   };
@@ -153,21 +160,25 @@ export default function DiveControl() {
         {/* Timer Grid - 2x2 */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <DiveTimer
+            ref={(ref) => timerRefs.current[0] = ref}
             teamId="EQUIPE 01"
             initialTime={initialTime}
             onDiveComplete={handleDiveComplete}
           />
           <DiveTimer
+            ref={(ref) => timerRefs.current[1] = ref}
             teamId="EQUIPE 02"
             initialTime={initialTime}
             onDiveComplete={handleDiveComplete}
           />
           <DiveTimer
+            ref={(ref) => timerRefs.current[2] = ref}
             teamId="EQUIPE 03"
             initialTime={initialTime}
             onDiveComplete={handleDiveComplete}
           />
           <DiveTimer
+            ref={(ref) => timerRefs.current[3] = ref}
             teamId="EQUIPE 04"
             initialTime={initialTime}
             onDiveComplete={handleDiveComplete}

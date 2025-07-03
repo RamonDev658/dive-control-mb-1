@@ -1,6 +1,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Download, Trash2 } from "lucide-react";
 
 interface DiveRecord {
@@ -40,15 +41,37 @@ export default function DiveControlTable({ records, onExportCSV, onClearRecords 
               <Download className="w-4 h-4" />
               SALVAR MG
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onClearRecords}
-              className="text-sm"
-            >
-              <Trash2 className="w-4 h-4" />
-              LIMPAR
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-sm"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  LIMPAR
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="bg-card border-military-gold/30">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="text-military-gold">Confirmar Limpeza</AlertDialogTitle>
+                  <AlertDialogDescription className="text-foreground">
+                    Esta ação irá limpar todos os registros de mergulho e resetar todos os dados dos mergulhadores. Esta ação não pode ser desfeita.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel className="bg-muted text-foreground hover:bg-muted/80">
+                    Cancelar
+                  </AlertDialogCancel>
+                  <AlertDialogAction 
+                    onClick={onClearRecords}
+                    className="bg-military-stop text-foreground hover:bg-military-stop/90"
+                  >
+                    Confirmar Limpeza
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </CardHeader>

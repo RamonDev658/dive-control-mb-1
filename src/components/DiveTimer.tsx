@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Play, Square, RotateCcw } from "lucide-react";
@@ -7,6 +7,10 @@ interface DiveTimerProps {
   teamId: string;
   initialTime: number; // in seconds
   onDiveComplete: (data: DiveData) => void;
+}
+
+interface DiveTimerRef {
+  resetAllData: () => void;
 }
 
 interface DiveData {
@@ -20,7 +24,7 @@ interface DiveData {
   activityType: string;
 }
 
-export default function DiveTimer({ teamId, initialTime, onDiveComplete }: DiveTimerProps) {
+const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTime, onDiveComplete }, ref) => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [startTime, setStartTime] = useState<Date | null>(null);
@@ -29,6 +33,23 @@ export default function DiveTimer({ teamId, initialTime, onDiveComplete }: DiveT
   const [diverC, setDiverC] = useState("Mergulhador C");
   const [activityType, setActivityType] = useState("Patrulhamento");
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const resetAllData = () => {
+    setIsRunning(false);
+    setElapsedTime(0);
+    setStartTime(null);
+    setDiverA("Mergulhador A");
+    setDiverB("Mergulhador B");
+    setDiverC("Mergulhador C");
+    setActivityType("Patrulhamento");
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+  };
+
+  useImperativeHandle(ref, () => ({
+    resetAllData
+  }));
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
@@ -229,4 +250,8 @@ export default function DiveTimer({ teamId, initialTime, onDiveComplete }: DiveT
       </div>
     </Card>
   );
-}
+});
+
+DiveTimer.displayName = "DiveTimer";
+
+export default DiveTimer;
