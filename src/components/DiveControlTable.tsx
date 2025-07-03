@@ -27,11 +27,11 @@ export default function DiveControlTable({ records, onExportCSV, onClearRecords 
   return (
     <Card className="bg-gradient-command border-military-gold/30 shadow-command">
       <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-xl font-bold text-military-gold">
+        <div className="flex items-center justify-between md:flex-row flex-col gap-4">
+          <CardTitle className="text-xl font-bold text-military-gold text-center md:text-left order-1">
             CONTROLE DE MERGULHOS
           </CardTitle>
-          <div className="flex gap-2">
+          <div className="flex gap-2 order-2 md:order-2">
             <Button
               variant="tactical"
               size="sm"
