@@ -228,7 +228,7 @@ export default function DiveControl() {
       </div>
 
       {/* Main Content with top padding for fixed header */}
-      <div className="pt-32 md:pt-24 p-4">
+      <div className="pt-40 md:pt-24 p-4">
         <div className="max-w-7xl mx-auto mb-8">
           {/* Timer Grid - Dynamic Teams */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
