@@ -234,20 +234,18 @@ export default function DiveControl() {
               />
             ))}
             
-            {/* Add Team Button - Shows if less than 3 teams */}
-            {teams.length < 3 && (
-              <div className="flex items-center justify-center">
-                <Button
-                  variant="outline"
-                  size="xl"
-                  onClick={addTeam}
-                  className="h-32 w-full border-dashed border-2 border-military-gold/50 hover:border-military-gold text-military-gold hover:bg-military-gold/10"
-                >
-                  <Plus className="w-8 h-8 mr-2" />
-                  ADICIONAR EQUIPE
-                </Button>
-              </div>
-            )}
+            {/* Add Team Button - Always visible */}
+            <div className="flex items-center justify-center">
+              <Button
+                variant="outline"
+                size="xl"
+                onClick={addTeam}
+                className="h-32 w-full border-dashed border-2 border-military-gold/50 hover:border-military-gold text-military-gold hover:bg-military-gold/10"
+              >
+                <Plus className="w-8 h-8 mr-2" />
+                ADICIONAR CARD
+              </Button>
+            </div>
           </div>
 
           {/* Control Table */}
