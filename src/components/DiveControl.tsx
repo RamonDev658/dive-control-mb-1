@@ -42,8 +42,7 @@ export default function DiveControl() {
   const [teams, setTeams] = useLocalStorage<Team[]>('divecontrol-teams', [
     { id: '1', name: 'EQUIPE 01' },
     { id: '2', name: 'EQUIPE 02' },
-    { id: '3', name: 'EQUIPE 03' },
-    { id: '4', name: 'EQUIPE 04' }
+    { id: '3', name: 'EQUIPE 03' }
   ]);
   const [isMobile, setIsMobile] = useState(false);
   const { toast } = useToast();
@@ -181,76 +180,83 @@ export default function DiveControl() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-tactical p-4">
+    <div className="min-h-screen bg-gradient-tactical">
       <InstallPrompt />
       <UpdateNotification />
       
-      {/* Header */}
-      <div className="max-w-7xl mx-auto mb-8">
-        <div className="flex items-center justify-between mb-6 flex-col md:flex-row gap-4">
-          <div className="text-center flex-1 order-2 md:order-1">
-            <div className="flex items-center justify-center gap-4 mb-2 flex-col md:flex-row">
-              <img 
-                src="/lovable-uploads/7032a47b-eff7-4654-889f-3d26c95cb414.png" 
-                alt="DiveControl Logo" 
-                className="w-16 h-16 md:w-20 md:h-20"
-              />
-              <div className="text-center md:text-left">
-                <h1 className="text-3xl md:text-4xl font-bold text-foreground drop-shadow-lg mb-1">
-                  DIVECONTROL_1.0
-                </h1>
-                <p className="text-base md:text-lg text-foreground/80 drop-shadow">
-                  Sistema de Controle de Mergulhos Militares
-                </p>
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-tactical/95 backdrop-blur-sm border-b border-military-gold/20">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between flex-col md:flex-row gap-4">
+            <div className="text-center flex-1 order-2 md:order-1">
+              <div className="flex items-center justify-center gap-4 mb-2 flex-col md:flex-row">
+                <img 
+                  src="/lovable-uploads/7032a47b-eff7-4654-889f-3d26c95cb414.png" 
+                  alt="DiveControl Logo" 
+                  className="w-24 h-24 md:w-20 md:h-20"
+                />
+                <div className="text-center md:text-left">
+                  <h1 className="text-2xl md:text-4xl font-bold text-foreground drop-shadow-lg mb-1">
+                    DIVECONTROL_1.0
+                  </h1>
+                  <p className="text-sm md:text-lg text-foreground/80 drop-shadow">
+                    Sistema de Controle de Mergulhos Militares
+                  </p>
+                </div>
               </div>
             </div>
+            
+            <Button
+              variant="tactical"
+              size="xl"
+              onClick={exportToCSV}
+              className="min-w-[150px] order-1 md:order-2 hidden md:flex"
+            >
+              <Save className="w-5 h-5" />
+              SALVAR MG
+            </Button>
           </div>
-          
-          <Button
-            variant="tactical"
-            size="xl"
-            onClick={exportToCSV}
-            className="min-w-[150px] order-1 md:order-2 hidden md:flex"
-          >
-            <Save className="w-5 h-5" />
-            SALVAR MG
-          </Button>
         </div>
+      </div>
 
-        {/* Timer Grid - Dynamic Teams */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {teams.map((team) => (
-            <DiveTimer
-              key={team.id}
-              ref={(ref) => timerRefs.current[team.id] = ref}
-              teamId={team.name}
-              initialTime={initialTime}
-              onDiveComplete={handleDiveComplete}
-            />
-          ))}
-          
-          {/* Add Team Button - Shows if less than max teams */}
-          {teams.length < (isMobile ? 8 : 6) && (
-            <div className="flex items-center justify-center">
-              <Button
-                variant="outline"
-                size="xl"
-                onClick={addTeam}
-                className="h-32 w-full border-dashed border-2 border-military-gold/50 hover:border-military-gold text-military-gold hover:bg-military-gold/10"
-              >
-                <Plus className="w-8 h-8 mr-2" />
-                ADICIONAR EQUIPE
-              </Button>
-            </div>
-          )}
+      {/* Main Content with top padding for fixed header */}
+      <div className="pt-32 md:pt-28 p-4">
+        <div className="max-w-7xl mx-auto mb-8">
+          {/* Timer Grid - Dynamic Teams */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {teams.map((team) => (
+              <DiveTimer
+                key={team.id}
+                ref={(ref) => timerRefs.current[team.id] = ref}
+                teamId={team.name}
+                initialTime={initialTime}
+                onDiveComplete={handleDiveComplete}
+              />
+            ))}
+            
+            {/* Add Team Button - Shows if less than max teams */}
+            {teams.length < (isMobile ? 8 : 6) && (
+              <div className="flex items-center justify-center">
+                <Button
+                  variant="outline"
+                  size="xl"
+                  onClick={addTeam}
+                  className="h-32 w-full border-dashed border-2 border-military-gold/50 hover:border-military-gold text-military-gold hover:bg-military-gold/10"
+                >
+                  <Plus className="w-8 h-8 mr-2" />
+                  ADICIONAR EQUIPE
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* Control Table */}
+          <DiveControlTable
+            records={diveRecords}
+            onExportCSV={exportToCSV}
+            onClearRecords={clearRecords}
+          />
         </div>
-
-        {/* Control Table */}
-        <DiveControlTable
-          records={diveRecords}
-          onExportCSV={exportToCSV}
-          onClearRecords={clearRecords}
-        />
       </div>
     </div>
   );
