@@ -44,6 +44,14 @@ export default function DiveControl() {
     { id: '2', name: 'EQUIPE 02' },
     { id: '3', name: 'EQUIPE 03' }
   ]);
+
+  // Ensure only 3 teams are shown initially
+  useEffect(() => {
+    if (teams.length > 3) {
+      const firstThreeTeams = teams.slice(0, 3);
+      setTeams(firstThreeTeams);
+    }
+  }, []);
   const [isMobile, setIsMobile] = useState(false);
   const { toast } = useToast();
   const timerRefs = useRef<{ [key: string]: { resetAllData: () => void } | null }>({});
