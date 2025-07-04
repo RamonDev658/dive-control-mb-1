@@ -186,7 +186,7 @@ export default function DiveControl() {
       
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-tactical/95 backdrop-blur-sm border-b border-military-gold/20">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+        <div className="max-w-7xl mx-auto px-4 py-2">
           <div className="flex items-center justify-between flex-col md:flex-row gap-4">
             <div className="text-center flex-1 order-2 md:order-1">
               <div className="flex items-center justify-center gap-4 mb-2 flex-col md:flex-row">
@@ -220,7 +220,7 @@ export default function DiveControl() {
       </div>
 
       {/* Main Content with top padding for fixed header */}
-      <div className="pt-32 md:pt-28 p-4">
+      <div className="pt-24 md:pt-20 p-4">
         <div className="max-w-7xl mx-auto mb-8">
           {/* Timer Grid - Dynamic Teams */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
