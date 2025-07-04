@@ -136,6 +136,11 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
             type="text"
             value={diverA}
             onChange={(e) => setDiverA(e.target.value)}
+            onFocus={(e) => {
+              if (e.target.value === "Mergulhador A") {
+                setDiverA("");
+              }
+            }}
             className="w-full px-3 py-2 bg-muted border border-border rounded text-center text-foreground text-sm"
             placeholder="Mergulhador A"
           />
@@ -143,6 +148,11 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
             type="text"
             value={diverB}
             onChange={(e) => setDiverB(e.target.value)}
+            onFocus={(e) => {
+              if (e.target.value === "Mergulhador B") {
+                setDiverB("");
+              }
+            }}
             className="w-full px-3 py-2 bg-muted border border-border rounded text-center text-foreground text-sm"
             placeholder="Mergulhador B"
           />
@@ -154,6 +164,11 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
                 type="text"
                 value={diverC}
                 onChange={(e) => setDiverC(e.target.value)}
+                onFocus={(e) => {
+                  if (e.target.value === "") {
+                    // DiverC starts empty, so no need to clear
+                  }
+                }}
                 className="flex-1 px-3 py-2 bg-muted border border-border rounded text-center text-foreground text-sm"
                 placeholder="Mergulhador C"
               />
@@ -185,6 +200,11 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
             type="text"
             value={activityType}
             onChange={(e) => setActivityType(e.target.value)}
+            onFocus={(e) => {
+              if (e.target.value === "Patrulhamento") {
+                setActivityType("");
+              }
+            }}
             className="w-full px-3 py-2 bg-muted border border-border rounded text-center text-foreground text-sm"
             placeholder="Tipo de Atividade"
           />
