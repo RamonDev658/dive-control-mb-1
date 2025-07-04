@@ -19,7 +19,9 @@ const buttonVariants = cva(
         militaryStart: "bg-military-start text-black font-bold hover:bg-military-start/90 shadow-tactical transform hover:scale-105 active:scale-95",
         militaryStop: "bg-military-stop text-foreground font-bold hover:bg-military-stop/90 shadow-command transform hover:scale-105 active:scale-95",
         tactical: "bg-gradient-tactical text-foreground font-semibold border border-military-gold/30 hover:border-military-gold/60 shadow-tactical",
-        command: "bg-gradient-command text-foreground border border-border hover:bg-card shadow-command"
+        command: "bg-gradient-command text-foreground border border-border hover:bg-card shadow-command",
+        // Dynamic start/stop variant
+        dynamicAction: "font-bold shadow-tactical transform hover:scale-105 active:scale-95 transition-all duration-300"
       },
       size: {
         default: "h-10 px-4 py-2",

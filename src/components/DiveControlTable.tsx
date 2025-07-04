@@ -9,7 +9,7 @@ interface DiveRecord {
   teamName: string;
   diverA: string;
   diverB: string;
-  diverC: string;
+  diverC?: string; // Optional third diver
   activityType: string;
   date: string;
   startTime: string;
@@ -94,7 +94,7 @@ export default function DiveControlTable({ records, onExportCSV, onClearRecords 
                     </div>
                     <div className="text-sm">
                       <div className="text-foreground mb-1">
-                        <span className="text-muted-foreground">Mergulhadores:</span> {[record.diverA, record.diverB, record.diverC].filter(diver => diver.trim()).join(' / ')}
+                        <span className="text-muted-foreground">Mergulhadores:</span> {[record.diverA, record.diverB, record.diverC].filter(diver => diver && diver.trim()).join(' / ')}
                       </div>
                       <div className="text-foreground mb-1">
                         <span className="text-muted-foreground">Atividade:</span> {record.activityType}
@@ -146,7 +146,7 @@ export default function DiveControlTable({ records, onExportCSV, onClearRecords 
                   >
                     <TableCell className="font-medium text-foreground">{record.teamName}</TableCell>
                     <TableCell className="text-foreground">
-                      {[record.diverA, record.diverB, record.diverC].filter(diver => diver.trim()).join(' / ')}
+                      {[record.diverA, record.diverB, record.diverC].filter(diver => diver && diver.trim()).join(' / ')}
                     </TableCell>
                     <TableCell className="text-foreground">{record.activityType}</TableCell>
                     <TableCell className="text-foreground">{record.date}</TableCell>

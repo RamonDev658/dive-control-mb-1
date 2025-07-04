@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Play, Square, RotateCcw } from "lucide-react";
+import { Play, Square, RotateCcw, Plus, Minus } from "lucide-react";
 
 interface DiveTimerProps {
   teamId: string;
@@ -20,7 +20,7 @@ interface DiveData {
   duration: number;
   diverA: string;
   diverB: string;
-  diverC: string;
+  diverC?: string; // Optional third diver
   activityType: string;
 }
 
@@ -30,7 +30,8 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [diverA, setDiverA] = useState("Mergulhador A");
   const [diverB, setDiverB] = useState("Mergulhador B");
-  const [diverC, setDiverC] = useState("Mergulhador C");
+  const [diverC, setDiverC] = useState("");
+  const [showThirdDiver, setShowThirdDiver] = useState(false);
   const [activityType, setActivityType] = useState("Patrulhamento");
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -40,7 +41,8 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
     setStartTime(null);
     setDiverA("Mergulhador A");
     setDiverB("Mergulhador B");
-    setDiverC("Mergulhador C");
+    setDiverC("");
+    setShowThirdDiver(false);
     setActivityType("Patrulhamento");
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
@@ -144,13 +146,41 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
             className="w-full px-3 py-2 bg-muted border border-border rounded text-center text-foreground text-sm"
             placeholder="Mergulhador B"
           />
-          <input
-            type="text"
-            value={diverC}
-            onChange={(e) => setDiverC(e.target.value)}
-            className="w-full px-3 py-2 bg-muted border border-border rounded text-center text-foreground text-sm"
-            placeholder="Mergulhador C"
-          />
+          
+          {/* Third diver input or add button */}
+          {showThirdDiver ? (
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={diverC}
+                onChange={(e) => setDiverC(e.target.value)}
+                className="flex-1 px-3 py-2 bg-muted border border-border rounded text-center text-foreground text-sm"
+                placeholder="Mergulhador C"
+              />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setShowThirdDiver(false);
+                  setDiverC("");
+                }}
+                className="h-10 w-10 p-0"
+              >
+                <Minus className="w-4 h-4" />
+              </Button>
+            </div>
+          ) : (
+            <Button
+              variant="outline"
+              onClick={() => setShowThirdDiver(true)}
+              className="w-full py-2 text-sm"
+              disabled={isRunning}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Adicionar Mergulhador
+            </Button>
+          )}
+          
           <input
             type="text"
             value={activityType}
@@ -206,25 +236,26 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
         {/* Control Buttons */}
         <div className="flex gap-3 justify-center">
           <Button
-            variant="militaryStart"
+            variant="dynamicAction"
             size="lg"
-            onClick={startTimer}
-            disabled={isRunning}
-            className="min-w-[100px]"
+            onClick={isRunning ? stopTimer : startTimer}
+            className={`min-w-[150px] ${
+              isRunning 
+                ? 'bg-military-stop text-foreground hover:bg-military-stop/90' 
+                : 'bg-military-start text-black hover:bg-military-start/90'
+            }`}
           >
-            <Play className="w-5 h-5" />
-            INICIAR
-          </Button>
-
-          <Button
-            variant="militaryStop"
-            size="lg"
-            onClick={stopTimer}
-            disabled={!isRunning}
-            className="min-w-[100px]"
-          >
-            <Square className="w-5 h-5" />
-            PARAR
+            {isRunning ? (
+              <>
+                <Square className="w-5 h-5" />
+                PARAR
+              </>
+            ) : (
+              <>
+                <Play className="w-5 h-5" />
+                INICIAR
+              </>
+            )}
           </Button>
 
           <Button

@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
@@ -6,7 +6,7 @@ import DiveTimer from "./DiveTimer";
 import DiveControlTable from "./DiveControlTable";
 import InstallPrompt from "./InstallPrompt";
 import UpdateNotification from "./UpdateNotification";
-import { Save } from "lucide-react";
+import { Save, Plus } from "lucide-react";
 
 interface DiveData {
   teamName: string;
@@ -15,7 +15,7 @@ interface DiveData {
   duration: number;
   diverA: string;
   diverB: string;
-  diverC: string;
+  diverC?: string; // Optional third diver
   activityType: string;
 }
 
@@ -24,7 +24,7 @@ interface DiveRecord {
   teamName: string;
   diverA: string;
   diverB: string;
-  diverC: string;
+  diverC?: string; // Optional third diver
   activityType: string;
   date: string;
   startTime: string;
@@ -32,10 +32,33 @@ interface DiveRecord {
   duration: string;
 }
 
+interface Team {
+  id: string;
+  name: string;
+}
+
 export default function DiveControl() {
   const [diveRecords, setDiveRecords, clearDiveRecords] = useLocalStorage<DiveRecord[]>('divecontrol-records', []);
+  const [teams, setTeams] = useLocalStorage<Team[]>('divecontrol-teams', [
+    { id: '1', name: 'EQUIPE 01' },
+    { id: '2', name: 'EQUIPE 02' },
+    { id: '3', name: 'EQUIPE 03' },
+    { id: '4', name: 'EQUIPE 04' }
+  ]);
+  const [isMobile, setIsMobile] = useState(false);
   const { toast } = useToast();
-  const timerRefs = useRef<Array<{ resetAllData: () => void } | null>>([null, null, null, null]);
+  const timerRefs = useRef<{ [key: string]: { resetAllData: () => void } | null }>({});
+
+  // Check if mobile on mount and window resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Initial timer setting: 54 minutes and 45 seconds
   const initialTime = 54 * 60 + 45; // 3285 seconds
@@ -86,7 +109,7 @@ export default function DiveControl() {
     
     // Criar uma linha para cada mergulhador
     diveRecords.forEach(record => {
-      const divers = [record.diverA, record.diverB, record.diverC].filter(diver => diver.trim());
+      const divers = [record.diverA, record.diverB, record.diverC].filter(diver => diver && diver.trim());
       divers.forEach(diver => {
         csvRows.push([record.teamName, diver, record.activityType, record.date, record.startTime, record.endTime, record.duration].join(','));
       });
@@ -114,7 +137,7 @@ export default function DiveControl() {
   const clearRecords = () => {
     clearDiveRecords();
     // Reset all timers
-    timerRefs.current.forEach(timerRef => {
+    Object.values(timerRefs.current).forEach(timerRef => {
       if (timerRef) {
         timerRef.resetAllData();
       }
@@ -123,6 +146,37 @@ export default function DiveControl() {
       title: "Registros Limpos",
       description: "Todos os registros e dados dos mergulhadores foram removidos",
       duration: 3000,
+    });
+  };
+
+  const addTeam = () => {
+    const newTeamNumber = teams.length + 1;
+    const newTeam: Team = {
+      id: Date.now().toString(),
+      name: `EQUIPE ${newTeamNumber.toString().padStart(2, '0')}`
+    };
+    setTeams(prev => [...prev, newTeam]);
+    
+    toast({
+      title: "Equipe Adicionada",
+      description: `${newTeam.name} foi criada`,
+      duration: 2000,
+    });
+  };
+
+  const removeTeam = (teamId: string) => {
+    setTeams(prev => prev.filter(team => team.id !== teamId));
+    // Reset timer for this team if it exists
+    const timerRef = timerRefs.current[teamId];
+    if (timerRef) {
+      timerRef.resetAllData();
+      delete timerRefs.current[teamId];
+    }
+    
+    toast({
+      title: "Equipe Removida",
+      description: "Equipe foi removida com sucesso",
+      duration: 2000,
     });
   };
 
@@ -163,32 +217,44 @@ export default function DiveControl() {
           </Button>
         </div>
 
-        {/* Timer Grid - 2x2 */}
+        {/* Timer Grid - Dynamic Teams */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <DiveTimer
-            ref={(ref) => timerRefs.current[0] = ref}
-            teamId="EQUIPE 01"
-            initialTime={initialTime}
-            onDiveComplete={handleDiveComplete}
-          />
-          <DiveTimer
-            ref={(ref) => timerRefs.current[1] = ref}
-            teamId="EQUIPE 02"
-            initialTime={initialTime}
-            onDiveComplete={handleDiveComplete}
-          />
-          <DiveTimer
-            ref={(ref) => timerRefs.current[2] = ref}
-            teamId="EQUIPE 03"
-            initialTime={initialTime}
-            onDiveComplete={handleDiveComplete}
-          />
-          <DiveTimer
-            ref={(ref) => timerRefs.current[3] = ref}
-            teamId="EQUIPE 04"
-            initialTime={initialTime}
-            onDiveComplete={handleDiveComplete}
-          />
+          {(isMobile ? teams.slice(0, 3) : teams).map((team) => (
+            <DiveTimer
+              key={team.id}
+              ref={(ref) => timerRefs.current[team.id] = ref}
+              teamId={team.name}
+              initialTime={initialTime}
+              onDiveComplete={handleDiveComplete}
+            />
+          ))}
+          
+          {/* Add Team Button - Shows on mobile as 4th card or on desktop if less than 4 teams */}
+          {(isMobile && teams.length > 3) ? (
+            <div className="flex items-center justify-center">
+              <Button
+                variant="outline"
+                size="xl"
+                onClick={addTeam}
+                className="h-32 w-full border-dashed border-2 border-military-gold/50 hover:border-military-gold text-military-gold hover:bg-military-gold/10"
+              >
+                <Plus className="w-8 h-8 mr-2" />
+                ADICIONAR EQUIPE
+              </Button>
+            </div>
+          ) : (!isMobile && teams.length < 6) ? (
+            <div className="flex items-center justify-center">
+              <Button
+                variant="outline"
+                size="xl"
+                onClick={addTeam}
+                className="h-32 w-full border-dashed border-2 border-military-gold/50 hover:border-military-gold text-military-gold hover:bg-military-gold/10"
+              >
+                <Plus className="w-8 h-8 mr-2" />
+                ADICIONAR EQUIPE
+              </Button>
+            </div>
+          ) : null}
         </div>
 
         {/* Control Table */}
