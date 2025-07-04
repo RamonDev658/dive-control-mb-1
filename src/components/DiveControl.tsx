@@ -219,7 +219,7 @@ export default function DiveControl() {
 
         {/* Timer Grid - Dynamic Teams */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {(isMobile ? teams.slice(0, 3) : teams).map((team) => (
+          {teams.map((team) => (
             <DiveTimer
               key={team.id}
               ref={(ref) => timerRefs.current[team.id] = ref}
@@ -229,8 +229,8 @@ export default function DiveControl() {
             />
           ))}
           
-          {/* Add Team Button - Shows on mobile as 4th card or on desktop if less than 4 teams */}
-          {(isMobile && teams.length > 3) ? (
+          {/* Add Team Button - Shows if less than max teams */}
+          {teams.length < (isMobile ? 8 : 6) && (
             <div className="flex items-center justify-center">
               <Button
                 variant="outline"
@@ -242,19 +242,7 @@ export default function DiveControl() {
                 ADICIONAR EQUIPE
               </Button>
             </div>
-          ) : (!isMobile && teams.length < 6) ? (
-            <div className="flex items-center justify-center">
-              <Button
-                variant="outline"
-                size="xl"
-                onClick={addTeam}
-                className="h-32 w-full border-dashed border-2 border-military-gold/50 hover:border-military-gold text-military-gold hover:bg-military-gold/10"
-              >
-                <Plus className="w-8 h-8 mr-2" />
-                ADICIONAR EQUIPE
-              </Button>
-            </div>
-          ) : null}
+          )}
         </div>
 
         {/* Control Table */}
