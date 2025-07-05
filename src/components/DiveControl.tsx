@@ -266,8 +266,8 @@ export default function DiveControl() {
       <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-tactical/95 backdrop-blur-sm border-b border-military-gold/20">
         <div className="max-w-7xl mx-auto px-4 py-2">
           <div className="flex items-center justify-between flex-col md:flex-row gap-4">
-            {/* User Info */}
-            <div className="flex items-center gap-4 order-1 md:order-0">
+            {/* Desktop: User Info on Left */}
+            <div className="hidden md:flex items-center gap-4 order-1 md:order-0">
               <div className="flex items-center gap-2 text-military-gold">
                 <User className="w-5 h-5" />
                 <span className="text-sm font-medium">
@@ -285,6 +285,7 @@ export default function DiveControl() {
               </Button>
             </div>
 
+            {/* Title Section - Center on desktop, top on mobile */}
             <div className="text-center flex-1 order-2 md:order-1">
               <div className="flex items-center justify-center gap-4 mb-2 flex-col md:flex-row">
                 <img 
@@ -300,6 +301,25 @@ export default function DiveControl() {
                     Sistema de Controle de Mergulhos Militares
                   </p>
                 </div>
+              </div>
+
+              {/* Mobile: User Info Below Title */}
+              <div className="flex md:hidden items-center justify-center gap-4 mt-4">
+                <div className="flex items-center gap-2 text-military-gold">
+                  <User className="w-5 h-5" />
+                  <span className="text-sm font-medium">
+                    {user?.email}
+                  </span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={signOut}
+                  className="text-military-gold/80 hover:text-military-gold hover:bg-military-gold/10"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  SAIR
+                </Button>
               </div>
             </div>
             
@@ -319,7 +339,7 @@ export default function DiveControl() {
       </div>
 
       {/* Main Content with top padding for fixed header */}
-      <div className="pt-40 md:pt-24 p-4">
+      <div className="pt-52 md:pt-24 p-4">
         <div className="max-w-7xl mx-auto mb-8">
           {/* Timer Grid - Dynamic Teams */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
