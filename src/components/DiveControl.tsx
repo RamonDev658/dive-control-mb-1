@@ -8,8 +8,7 @@ import DiveTimer from "./DiveTimer";
 import DiveControlTable from "./DiveControlTable";
 import InstallPrompt from "./InstallPrompt";
 import UpdateNotification from "./UpdateNotification";
-import DiveHistoryModal from "./DivHistoryModal";
-import { Save, Plus, LogOut, User, History } from "lucide-react";
+import { Save, Plus, LogOut, User } from "lucide-react";
 
 interface DiveData {
   teamName: string;
@@ -305,18 +304,6 @@ export default function DiveControl() {
             </div>
             
             <div className="flex gap-2 order-3 md:order-2">
-              <DiveHistoryModal
-                trigger={
-                  <Button
-                    variant="outline"
-                    size="xl"
-                    className="min-w-[150px] border-military-gold/50 text-military-gold hover:bg-military-gold/10"
-                  >
-                    <History className="w-5 h-5" />
-                    HISTÓRICO
-                  </Button>
-                }
-              />
               <Button
                 variant="tactical"
                 size="xl"

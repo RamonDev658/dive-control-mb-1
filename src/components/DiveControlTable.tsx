@@ -2,7 +2,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Download, Trash2 } from "lucide-react";
+import { Download, Trash2, History } from "lucide-react";
+import DiveHistoryModal from "./DivHistoryModal";
 
 interface DiveRecord {
   id: string;
@@ -32,6 +33,18 @@ export default function DiveControlTable({ records, onExportCSV, onClearRecords 
             CONTROLE DE MERGULHOS
           </CardTitle>
           <div className="flex gap-2 order-2 md:order-2">
+            <DiveHistoryModal
+              trigger={
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-sm border-military-gold/50 text-military-gold hover:bg-military-gold/10"
+                >
+                  <History className="w-4 h-4" />
+                  HISTÓRICO
+                </Button>
+              }
+            />
             <Button
               variant="tactical"
               size="sm"
