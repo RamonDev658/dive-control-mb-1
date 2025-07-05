@@ -184,7 +184,11 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
       const start = new Date(timerState.startTime);
       const elapsedSeconds = Math.floor((now.getTime() - start.getTime()) / 1000);
       
+      // Set all local states correctly
       setElapsedTime(elapsedSeconds);
+      setIsRunning(true);
+      setStartTime(start);
+      
       setTimerState(prev => ({
         ...prev,
         elapsedTime: elapsedSeconds
