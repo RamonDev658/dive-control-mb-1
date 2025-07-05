@@ -154,15 +154,7 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
   useEffect(() => {
     if (isRunning) {
       intervalRef.current = setInterval(() => {
-        setElapsedTime(prev => {
-          const newElapsed = prev + 1;
-          // Update localStorage with new elapsed time
-          setTimerState(currentState => ({
-            ...currentState,
-            elapsedTime: newElapsed
-          }));
-          return newElapsed;
-        });
+        setElapsedTime(prev => prev + 1);
       }, 1000);
     } else {
       if (intervalRef.current) {
@@ -175,7 +167,7 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
         clearInterval(intervalRef.current);
       }
     };
-  }, [isRunning, setTimerState]);
+  }, [isRunning]);
 
   // Initialize and restore timer state on component mount
   useEffect(() => {
@@ -184,15 +176,9 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
       const start = new Date(timerState.startTime);
       const elapsedSeconds = Math.floor((now.getTime() - start.getTime()) / 1000);
       
-      // Set all local states correctly
       setElapsedTime(elapsedSeconds);
       setIsRunning(true);
       setStartTime(start);
-      
-      setTimerState(prev => ({
-        ...prev,
-        elapsedTime: elapsedSeconds
-      }));
     }
   }, []); // Only run on mount
 
@@ -213,6 +199,16 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [isRunning, startTime, setTimerState]);
+
+  // Update localStorage when timer state changes
+  useEffect(() => {
+    setTimerState(prev => ({
+      ...prev,
+      elapsedTime,
+      isRunning,
+      startTime: startTime?.toISOString() || null
+    }));
+  }, [elapsedTime, isRunning, startTime, setTimerState]);
 
   // Update localStorage when diver data changes
   useEffect(() => {
