@@ -2,11 +2,13 @@ import { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useAuth } from "@/contexts/AuthContext";
+import { useDiveLogs } from "@/hooks/useDiveLogs";
 import DiveTimer from "./DiveTimer";
 import DiveControlTable from "./DiveControlTable";
 import InstallPrompt from "./InstallPrompt";
 import UpdateNotification from "./UpdateNotification";
-import { Save, Plus } from "lucide-react";
+import { Save, Plus, LogOut, User } from "lucide-react";
 
 interface DiveData {
   teamName: string;
@@ -54,6 +56,8 @@ export default function DiveControl() {
   }, []);
   const [isMobile, setIsMobile] = useState(false);
   const { toast } = useToast();
+  const { user, signOut } = useAuth();
+  const { logs, saveDiveLog, saveLogOffline } = useDiveLogs();
   const timerRefs = useRef<{ [key: string]: { resetAllData: () => void } | null }>({});
 
   // Check if mobile on mount and window resize
@@ -77,7 +81,32 @@ export default function DiveControl() {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleDiveComplete = (data: DiveData) => {
+  const handleDiveComplete = async (data: DiveData) => {
+    // Preparar dados para salvar no Supabase
+    const logData = {
+      equipe: data.teamName,
+      nome_guerra: data.diverA, // Assumindo que o primeiro mergulhador é o nome de guerra principal
+      nome_completo: data.diverB, // Assumindo que o segundo é o nome completo
+      posto_graduacao: data.diverC || '', // Terceiro mergulhador como posto/graduação (opcional)
+      atividade: data.activityType,
+      horario_inicio: data.startTime.toISOString(),
+      horario_fim: data.endTime.toISOString(),
+      duracao_em_seg: data.duration,
+      data: data.startTime.toISOString().split('T')[0] // YYYY-MM-DD format
+    };
+
+    // Tentar salvar no Supabase primeiro
+    const savedToSupabase = await saveDiveLog(logData);
+    
+    // Se falhar ao salvar no Supabase, salvar offline
+    if (!savedToSupabase) {
+      const isOnline = navigator.onLine;
+      if (!isOnline) {
+        saveLogOffline(logData);
+      }
+    }
+
+    // Manter compatibilidade com localStorage para registros locais
     const newRecord: DiveRecord = {
       id: Date.now().toString(),
       teamName: data.teamName,
@@ -92,12 +121,6 @@ export default function DiveControl() {
     };
 
     setDiveRecords(prev => [newRecord, ...prev]);
-    
-    toast({
-      title: "Mergulho Registrado",
-      description: `${data.teamName} - ${data.activityType} completou o mergulho`,
-      duration: 3000,
-    });
   };
 
   const exportToCSV = () => {
@@ -212,6 +235,25 @@ export default function DiveControl() {
       <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-tactical/95 backdrop-blur-sm border-b border-military-gold/20">
         <div className="max-w-7xl mx-auto px-4 py-2">
           <div className="flex items-center justify-between flex-col md:flex-row gap-4">
+            {/* User Info */}
+            <div className="flex items-center gap-4 order-1 md:order-0">
+              <div className="flex items-center gap-2 text-military-gold">
+                <User className="w-5 h-5" />
+                <span className="text-sm font-medium">
+                  {user?.email}
+                </span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={signOut}
+                className="text-military-gold/80 hover:text-military-gold hover:bg-military-gold/10"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                SAIR
+              </Button>
+            </div>
+
             <div className="text-center flex-1 order-2 md:order-1">
               <div className="flex items-center justify-center gap-4 mb-2 flex-col md:flex-row">
                 <img 
@@ -234,7 +276,7 @@ export default function DiveControl() {
               variant="tactical"
               size="xl"
               onClick={exportToCSV}
-              className="min-w-[150px] order-1 md:order-2 hidden md:flex"
+              className="min-w-[150px] order-3 md:order-2 hidden md:flex"
             >
               <Save className="w-5 h-5" />
               SALVAR MG

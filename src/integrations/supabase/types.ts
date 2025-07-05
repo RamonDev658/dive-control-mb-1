@@ -9,7 +9,54 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      mergulho_logs: {
+        Row: {
+          atividade: string
+          created_at: string
+          data: string
+          duracao_em_seg: number
+          equipe: string
+          horario_fim: string
+          horario_inicio: string
+          id: string
+          nome_completo: string | null
+          nome_guerra: string
+          posto_graduacao: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          atividade: string
+          created_at?: string
+          data: string
+          duracao_em_seg: number
+          equipe: string
+          horario_fim: string
+          horario_inicio: string
+          id?: string
+          nome_completo?: string | null
+          nome_guerra: string
+          posto_graduacao?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          atividade?: string
+          created_at?: string
+          data?: string
+          duracao_em_seg?: number
+          equipe?: string
+          horario_fim?: string
+          horario_inicio?: string
+          id?: string
+          nome_completo?: string | null
+          nome_guerra?: string
+          posto_graduacao?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
