@@ -32,7 +32,8 @@ export default function DiveControlTable({ records, onExportCSV, onClearRecords 
           <CardTitle className="text-xl font-bold text-military-gold text-center md:text-left order-1">
             CONTROLE DE MERGULHOS
           </CardTitle>
-          <div className="flex gap-2 order-2 md:order-2">
+          {/* Desktop buttons */}
+          <div className="hidden md:flex gap-2 order-2 md:order-2">
             <DiveHistoryModal
               trigger={
                 <Button
@@ -86,6 +87,31 @@ export default function DiveControlTable({ records, onExportCSV, onClearRecords 
               </AlertDialogContent>
             </AlertDialog>
           </div>
+
+          {/* Mobile buttons - only HISTÓRICO and SALVAR MG */}
+          <div className="flex md:hidden gap-2 order-2">
+            <DiveHistoryModal
+              trigger={
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-sm border-military-gold/50 text-military-gold hover:bg-military-gold/10"
+                >
+                  <History className="w-4 h-4" />
+                  HISTÓRICO
+                </Button>
+              }
+            />
+            <Button
+              variant="tactical"
+              size="sm"
+              onClick={onExportCSV}
+              className="text-sm"
+            >
+              <Download className="w-4 h-4" />
+              SALVAR MG
+            </Button>
+          </div>
         </div>
       </CardHeader>
       
@@ -129,6 +155,41 @@ export default function DiveControlTable({ records, onExportCSV, onClearRecords 
                 ))}
               </div>
             )}
+            
+            {/* Mobile LIMPAR button - positioned at bottom of records */}
+            <div className="flex justify-center pt-4 border-t border-military-gold/20 mt-4">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-sm w-full max-w-xs"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    LIMPAR
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-card border-military-gold/30">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="text-military-gold">Confirmar Limpeza</AlertDialogTitle>
+                    <AlertDialogDescription className="text-foreground">
+                      Esta ação irá limpar todos os registros de mergulho e resetar todos os dados dos mergulhadores. Esta ação não pode ser desfeita.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="bg-muted text-foreground hover:bg-muted/80">
+                      Cancelar
+                    </AlertDialogCancel>
+                    <AlertDialogAction 
+                      onClick={onClearRecords}
+                      className="bg-military-stop text-foreground hover:bg-military-stop/90"
+                    >
+                      Confirmar Limpeza
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </div>
 
           {/* Desktop Table View */}

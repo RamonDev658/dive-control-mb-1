@@ -375,6 +375,15 @@ export default function DiveControl() {
           />
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-gradient-command border-t border-military-gold/20 py-4 mt-8">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p className="text-sm text-foreground/80">
+            TODOS OS DIREITOS RESERVADOS 2025 - DevCA658
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
