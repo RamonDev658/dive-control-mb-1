@@ -20,8 +20,8 @@ export type Database = {
           horario_inicio: string
           id: string
           nome_guerra: string
-          nome_guerra_2: string | null
-          nome_guerra_3: string | null
+          nome_guerra_2: string
+          nome_guerra_3: string
           updated_at: string
           user_id: string
         }
@@ -35,8 +35,8 @@ export type Database = {
           horario_inicio: string
           id?: string
           nome_guerra: string
-          nome_guerra_2?: string | null
-          nome_guerra_3?: string | null
+          nome_guerra_2: string
+          nome_guerra_3: string
           updated_at?: string
           user_id: string
         }
@@ -50,8 +50,8 @@ export type Database = {
           horario_inicio?: string
           id?: string
           nome_guerra?: string
-          nome_guerra_2?: string | null
-          nome_guerra_3?: string | null
+          nome_guerra_2?: string
+          nome_guerra_3?: string
           updated_at?: string
           user_id?: string
         }

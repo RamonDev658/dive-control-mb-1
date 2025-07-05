@@ -83,24 +83,24 @@ export default function DiveControl() {
   };
 
   const handleDiveComplete = async (data: DiveData) => {
-    // Create individual records for each diver
+    // Create individual records for each diver - each diver gets their own independent record
     const divers = [
-      { nome_guerra: data.diverA, role: 'principal' },
-      { nome_guerra: data.diverB, role: 'secundario' },
-      ...(data.diverC ? [{ nome_guerra: data.diverC, role: 'terceiro' }] : [])
-    ].filter(diver => diver.nome_guerra && diver.nome_guerra.trim() && 
-             !['Mergulhador A', 'Mergulhador B', 'Mergulhador C'].includes(diver.nome_guerra));
+      data.diverA,
+      data.diverB,
+      ...(data.diverC ? [data.diverC] : [])
+    ].filter(diver => diver && diver.trim() && 
+             !['Mergulhador A', 'Mergulhador B', 'Mergulhador C'].includes(diver));
 
     let savedCount = 0;
     let offlineCount = 0;
 
-    // Save each diver as a separate record in Supabase
+    // Save each diver as a separate independent record in Supabase
     for (const diver of divers) {
       const logData = {
         equipe: data.teamName,
-        nome_guerra: diver.nome_guerra,
-        nome_guerra_2: diver.role === 'principal' ? data.diverB : '', // Use diverB as second diver name
-        nome_guerra_3: diver.role === 'terceiro' ? data.diverC : '', // Use diverC as third diver name
+        nome_guerra: diver,
+        nome_guerra_2: '', // Empty for individual records
+        nome_guerra_3: '', // Empty for individual records
         atividade: data.activityType,
         horario_inicio: data.startTime.toISOString(),
         horario_fim: data.endTime.toISOString(),

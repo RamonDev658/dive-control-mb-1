@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -19,10 +19,10 @@ export default function DiveHistoryModal({ trigger }: DiveHistoryModalProps) {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && logs.length === 0) {
       fetchLogs();
     }
-  }, [isOpen, fetchLogs]);
+  }, [isOpen]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR');
@@ -72,6 +72,9 @@ export default function DiveHistoryModal({ trigger }: DiveHistoryModalProps) {
             <Calendar className="w-5 h-5" />
             HISTÓRICO DE MERGULHOS
           </DialogTitle>
+          <DialogDescription>
+            Visualize todos os mergulhos registrados no sistema
+          </DialogDescription>
         </DialogHeader>
         
         <ScrollArea className="h-[70vh]">
@@ -100,19 +103,17 @@ export default function DiveHistoryModal({ trigger }: DiveHistoryModalProps) {
                     
                     <div className="overflow-x-auto">
                       <Table>
-                        <TableHeader>
-                          <TableRow className="bg-military-blue/20 hover:bg-military-blue/30">
-                            <TableHead className="text-military-gold font-semibold">Equipe</TableHead>
-                            <TableHead className="text-military-gold font-semibold">Mergulhador</TableHead>
-                            <TableHead className="text-military-gold font-semibold">Mergulhador 2</TableHead>
-                            <TableHead className="text-military-gold font-semibold">Mergulhador 3</TableHead>
-                            <TableHead className="text-military-gold font-semibold">Atividade</TableHead>
-                            <TableHead className="text-military-gold font-semibold">Início</TableHead>
-                            <TableHead className="text-military-gold font-semibold">Término</TableHead>
-                            <TableHead className="text-military-gold font-semibold">Duração</TableHead>
-                            <TableHead className="text-military-gold font-semibold">Ações</TableHead>
-                          </TableRow>
-                        </TableHeader>
+                         <TableHeader>
+                           <TableRow className="bg-military-blue/20 hover:bg-military-blue/30">
+                             <TableHead className="text-military-gold font-semibold">Equipe</TableHead>
+                             <TableHead className="text-military-gold font-semibold">Mergulhador</TableHead>
+                             <TableHead className="text-military-gold font-semibold">Atividade</TableHead>
+                             <TableHead className="text-military-gold font-semibold">Início</TableHead>
+                             <TableHead className="text-military-gold font-semibold">Término</TableHead>
+                             <TableHead className="text-military-gold font-semibold">Duração</TableHead>
+                             <TableHead className="text-military-gold font-semibold">Ações</TableHead>
+                           </TableRow>
+                         </TableHeader>
                         <TableBody>
                           {dayLogs
                             .sort((a, b) => new Date(b.horario_inicio).getTime() - new Date(a.horario_inicio).getTime())
@@ -124,21 +125,15 @@ export default function DiveHistoryModal({ trigger }: DiveHistoryModalProps) {
                                     {log.equipe}
                                   </div>
                                 </TableCell>
-                                <TableCell className="text-foreground font-medium">
-                                  {log.nome_guerra}
-                                </TableCell>
-                                <TableCell className="text-foreground">
-                                  {log.nome_guerra_2 || '-'}
-                                </TableCell>
-                                <TableCell className="text-foreground">
-                                  {log.nome_guerra_3 || '-'}
-                                </TableCell>
-                                <TableCell className="text-foreground">
-                                  <div className="flex items-center gap-2">
-                                    <Activity className="w-4 h-4 text-military-gold" />
-                                    {log.atividade}
-                                  </div>
-                                </TableCell>
+                                 <TableCell className="text-foreground font-medium">
+                                   {log.nome_guerra}
+                                 </TableCell>
+                                 <TableCell className="text-foreground">
+                                   <div className="flex items-center gap-2">
+                                     <Activity className="w-4 h-4 text-military-gold" />
+                                     {log.atividade}
+                                   </div>
+                                 </TableCell>
                                 <TableCell className="text-foreground">
                                   <div className="flex items-center gap-2">
                                     <Clock className="w-4 h-4 text-military-gold" />
