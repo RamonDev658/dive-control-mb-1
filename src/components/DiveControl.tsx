@@ -117,8 +117,24 @@ export default function DiveControl() {
     // Criar uma linha para cada mergulhador
     diveRecords.forEach(record => {
       const divers = [record.diverA, record.diverB, record.diverC].filter(diver => diver && diver.trim());
+      
+      // Calculate duration from start and end time difference
+      const [startHour, startMin, startSec] = record.startTime.split(':').map(Number);
+      const [endHour, endMin, endSec] = record.endTime.split(':').map(Number);
+      
+      const startTotalSeconds = startHour * 3600 + startMin * 60 + startSec;
+      const endTotalSeconds = endHour * 3600 + endMin * 60 + endSec;
+      let durationSeconds = endTotalSeconds - startTotalSeconds;
+      
+      // Handle overnight dives (if end time is next day)
+      if (durationSeconds < 0) {
+        durationSeconds += 24 * 3600; // Add 24 hours
+      }
+      
+      const formattedDuration = formatDuration(durationSeconds);
+      
       divers.forEach(diver => {
-        csvRows.push([record.teamName, diver, record.activityType, record.date, record.startTime, record.endTime, record.duration].join(','));
+        csvRows.push([record.teamName, diver, record.activityType, record.date, record.startTime, record.endTime, formattedDuration].join(','));
       });
     });
     

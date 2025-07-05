@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } f
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Play, Square, RotateCcw, Plus, Minus } from "lucide-react";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 interface DiveTimerProps {
   teamId: string;
@@ -25,17 +26,44 @@ interface DiveData {
 }
 
 const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTime, onDiveComplete }, ref) => {
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
-  const [startTime, setStartTime] = useState<Date | null>(null);
-  const [diverA, setDiverA] = useState("Mergulhador A");
-  const [diverB, setDiverB] = useState("Mergulhador B");
-  const [diverC, setDiverC] = useState("");
-  const [showThirdDiver, setShowThirdDiver] = useState(false);
-  const [activityType, setActivityType] = useState("Patrulhamento");
+  // Use localStorage to persist timer state
+  const [timerState, setTimerState] = useLocalStorage(`timer-${teamId}`, {
+    elapsedTime: 0,
+    isRunning: false,
+    startTime: null as string | null,
+    diverA: "Mergulhador A",
+    diverB: "Mergulhador B",
+    diverC: "",
+    showThirdDiver: false,
+    activityType: "Patrulhamento"
+  });
+
+  // Local state for the timer
+  const [elapsedTime, setElapsedTime] = useState(timerState.elapsedTime);
+  const [isRunning, setIsRunning] = useState(timerState.isRunning);
+  const [startTime, setStartTime] = useState<Date | null>(
+    timerState.startTime ? new Date(timerState.startTime) : null
+  );
+  const [diverA, setDiverA] = useState(timerState.diverA);
+  const [diverB, setDiverB] = useState(timerState.diverB);
+  const [diverC, setDiverC] = useState(timerState.diverC);
+  const [showThirdDiver, setShowThirdDiver] = useState(timerState.showThirdDiver);
+  const [activityType, setActivityType] = useState(timerState.activityType);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const resetAllData = () => {
+    const defaultState = {
+      elapsedTime: 0,
+      isRunning: false,
+      startTime: null as string | null,
+      diverA: "Mergulhador A",
+      diverB: "Mergulhador B",
+      diverC: "",
+      showThirdDiver: false,
+      activityType: "Patrulhamento"
+    };
+    
+    setTimerState(defaultState);
     setIsRunning(false);
     setElapsedTime(0);
     setStartTime(null);
@@ -44,6 +72,7 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
     setDiverC("");
     setShowThirdDiver(false);
     setActivityType("Patrulhamento");
+    
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
@@ -62,8 +91,14 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
 
   const startTimer = () => {
     if (!isRunning) {
+      const now = new Date();
       setIsRunning(true);
-      setStartTime(new Date());
+      setStartTime(now);
+      setTimerState(prev => ({
+        ...prev,
+        isRunning: true,
+        startTime: now.toISOString()
+      }));
     }
   };
 
@@ -71,6 +106,18 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
     if (isRunning && startTime) {
       setIsRunning(false);
       const endTime = new Date();
+      
+      // Clear localStorage after completing dive
+      setTimerState({
+        elapsedTime: 0,
+        isRunning: false,
+        startTime: null,
+        diverA: "Mergulhador A",
+        diverB: "Mergulhador B",
+        diverC: "",
+        showThirdDiver: false,
+        activityType: "Patrulhamento"
+      });
       
       onDiveComplete({
         teamName: teamId,
@@ -93,6 +140,12 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
     setIsRunning(false);
     setElapsedTime(0);
     setStartTime(null);
+    setTimerState(prev => ({
+      ...prev,
+      isRunning: false,
+      elapsedTime: 0,
+      startTime: null
+    }));
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
@@ -101,7 +154,15 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
   useEffect(() => {
     if (isRunning) {
       intervalRef.current = setInterval(() => {
-        setElapsedTime(prev => prev + 1);
+        setElapsedTime(prev => {
+          const newElapsed = prev + 1;
+          // Update localStorage with new elapsed time
+          setTimerState(currentState => ({
+            ...currentState,
+            elapsedTime: newElapsed
+          }));
+          return newElapsed;
+        });
       }, 1000);
     } else {
       if (intervalRef.current) {
@@ -114,7 +175,52 @@ const DiveTimer = forwardRef<DiveTimerRef, DiveTimerProps>(({ teamId, initialTim
         clearInterval(intervalRef.current);
       }
     };
-  }, [isRunning]);
+  }, [isRunning, setTimerState]);
+
+  // Initialize and restore timer state on component mount
+  useEffect(() => {
+    if (timerState.startTime && timerState.isRunning) {
+      const now = new Date();
+      const start = new Date(timerState.startTime);
+      const elapsedSeconds = Math.floor((now.getTime() - start.getTime()) / 1000);
+      
+      setElapsedTime(elapsedSeconds);
+      setTimerState(prev => ({
+        ...prev,
+        elapsedTime: elapsedSeconds
+      }));
+    }
+  }, []); // Only run on mount
+
+  // Handle visibility change to recalculate elapsed time when app comes back
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && isRunning && startTime) {
+        const now = new Date();
+        const elapsedSeconds = Math.floor((now.getTime() - startTime.getTime()) / 1000);
+        setElapsedTime(elapsedSeconds);
+        setTimerState(prev => ({
+          ...prev,
+          elapsedTime: elapsedSeconds
+        }));
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [isRunning, startTime, setTimerState]);
+
+  // Update localStorage when diver data changes
+  useEffect(() => {
+    setTimerState(prev => ({
+      ...prev,
+      diverA,
+      diverB,
+      diverC,
+      showThirdDiver,
+      activityType
+    }));
+  }, [diverA, diverB, diverC, showThirdDiver, activityType, setTimerState]);
 
   // Calculate progress for circular timer (progressive)
   const maxDisplayTime = 3600; // 1 hour max display
