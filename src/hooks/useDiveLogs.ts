@@ -48,16 +48,27 @@ export const useDiveLogs = () => {
 
       if (error) {
         console.error('Error fetching logs:', error);
-        toast({
-          title: "Erro",
-          description: "Não foi possível carregar os registros",
-          variant: "destructive",
-        });
+        // Only show error toast if user is online
+        if (navigator.onLine) {
+          toast({
+            title: "Erro de Conexão",
+            description: "Não foi possível carregar os registros. Verifique sua conexão.",
+            variant: "destructive",
+          });
+        }
       } else {
         setLogs(data || []);
       }
     } catch (error) {
       console.error('Error fetching logs:', error);
+      // Handle network errors more gracefully
+      if (navigator.onLine) {
+        toast({
+          title: "Erro de Rede",
+          description: "Falha na conexão com o servidor. Tente novamente.",
+          variant: "destructive",
+        });
+      }
     }
     setLoading(false);
   };
@@ -83,30 +94,24 @@ export const useDiveLogs = () => {
 
       if (error) {
         console.error('Error saving log:', error);
-        toast({
-          title: "Erro",
-          description: "Não foi possível salvar o registro",
-          variant: "destructive",
-        });
+        // Only show toast for first save attempt
+        if (navigator.onLine) {
+          toast({
+            title: "Erro ao Salvar",
+            description: "Não foi possível salvar no servidor. Tentando salvar offline...",
+            variant: "destructive",
+          });
+        }
         return false;
       }
 
-      // Refresh logs after saving
-      await fetchLogs();
+      // Refresh logs after saving (but don't wait for it)
+      fetchLogs().catch(err => console.error('Error refreshing logs:', err));
       
-      toast({
-        title: "Mergulho Registrado",
-        description: "Dados salvos com sucesso no banco de dados",
-      });
-      
+      // Only show success toast once per dive completion
       return true;
     } catch (error) {
       console.error('Error saving log:', error);
-      toast({
-        title: "Erro",
-        description: "Não foi possível salvar o registro",
-        variant: "destructive",
-      });
       return false;
     }
   };

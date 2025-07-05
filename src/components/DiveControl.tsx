@@ -8,7 +8,8 @@ import DiveTimer from "./DiveTimer";
 import DiveControlTable from "./DiveControlTable";
 import InstallPrompt from "./InstallPrompt";
 import UpdateNotification from "./UpdateNotification";
-import { Save, Plus, LogOut, User } from "lucide-react";
+import DiveHistoryModal from "./DivHistoryModal";
+import { Save, Plus, LogOut, User, History } from "lucide-react";
 
 interface DiveData {
   teamName: string;
@@ -82,31 +83,62 @@ export default function DiveControl() {
   };
 
   const handleDiveComplete = async (data: DiveData) => {
-    // Preparar dados para salvar no Supabase
-    const logData = {
-      equipe: data.teamName,
-      nome_guerra: data.diverA, // Assumindo que o primeiro mergulhador é o nome de guerra principal
-      nome_completo: data.diverB, // Assumindo que o segundo é o nome completo
-      posto_graduacao: data.diverC || '', // Terceiro mergulhador como posto/graduação (opcional)
-      atividade: data.activityType,
-      horario_inicio: data.startTime.toISOString(),
-      horario_fim: data.endTime.toISOString(),
-      duracao_em_seg: data.duration,
-      data: data.startTime.toISOString().split('T')[0] // YYYY-MM-DD format
-    };
+    // Create individual records for each diver
+    const divers = [
+      { nome_guerra: data.diverA, role: 'principal' },
+      { nome_guerra: data.diverB, role: 'secundario' },
+      ...(data.diverC ? [{ nome_guerra: data.diverC, role: 'terceiro' }] : [])
+    ].filter(diver => diver.nome_guerra && diver.nome_guerra.trim() && 
+             !['Mergulhador A', 'Mergulhador B', 'Mergulhador C'].includes(diver.nome_guerra));
 
-    // Tentar salvar no Supabase primeiro
-    const savedToSupabase = await saveDiveLog(logData);
-    
-    // Se falhar ao salvar no Supabase, salvar offline
-    if (!savedToSupabase) {
-      const isOnline = navigator.onLine;
-      if (!isOnline) {
-        saveLogOffline(logData);
+    let savedCount = 0;
+    let offlineCount = 0;
+
+    // Save each diver as a separate record in Supabase
+    for (const diver of divers) {
+      const logData = {
+        equipe: data.teamName,
+        nome_guerra: diver.nome_guerra,
+        nome_completo: diver.role === 'principal' ? data.diverB : '', // Use diverB as full name for principal
+        posto_graduacao: diver.role === 'terceiro' ? data.diverC : '', // Use diverC as rank if it's the third diver
+        atividade: data.activityType,
+        horario_inicio: data.startTime.toISOString(),
+        horario_fim: data.endTime.toISOString(),
+        duracao_em_seg: data.duration,
+        data: data.startTime.toISOString().split('T')[0] // YYYY-MM-DD format
+      };
+
+      // Try to save to Supabase first
+      const savedToSupabase = await saveDiveLog(logData);
+      
+      if (savedToSupabase) {
+        savedCount++;
+      } else {
+        // If fails to save to Supabase, save offline
+        const isOnline = navigator.onLine;
+        if (!isOnline) {
+          saveLogOffline(logData);
+          offlineCount++;
+        }
       }
     }
 
-    // Manter compatibilidade com localStorage para registros locais
+    // Show consolidated success message
+    if (savedCount > 0) {
+      toast({
+        title: "Mergulho Registrado",
+        description: `${savedCount} mergulhador(es) salvo(s) com sucesso no banco de dados`,
+      });
+    }
+
+    if (offlineCount > 0) {
+      toast({
+        title: "Salvo Offline",
+        description: `${offlineCount} mergulhador(es) salvo(s) offline. Será sincronizado quando voltar online.`,
+      });
+    }
+
+    // Maintain localStorage compatibility for local records - one record per team dive
     const newRecord: DiveRecord = {
       id: Date.now().toString(),
       teamName: data.teamName,
@@ -272,15 +304,29 @@ export default function DiveControl() {
               </div>
             </div>
             
-            <Button
-              variant="tactical"
-              size="xl"
-              onClick={exportToCSV}
-              className="min-w-[150px] order-3 md:order-2 hidden md:flex"
-            >
-              <Save className="w-5 h-5" />
-              SALVAR MG
-            </Button>
+            <div className="flex gap-2 order-3 md:order-2">
+              <DiveHistoryModal
+                trigger={
+                  <Button
+                    variant="outline"
+                    size="xl"
+                    className="min-w-[150px] border-military-gold/50 text-military-gold hover:bg-military-gold/10"
+                  >
+                    <History className="w-5 h-5" />
+                    HISTÓRICO
+                  </Button>
+                }
+              />
+              <Button
+                variant="tactical"
+                size="xl"
+                onClick={exportToCSV}
+                className="min-w-[150px] hidden md:flex"
+              >
+                <Save className="w-5 h-5" />
+                SALVAR MG
+              </Button>
+            </div>
           </div>
         </div>
       </div>
