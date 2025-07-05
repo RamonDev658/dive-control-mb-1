@@ -19,9 +19,9 @@ export type Database = {
           horario_fim: string
           horario_inicio: string
           id: string
-          nome_completo: string | null
           nome_guerra: string
-          posto_graduacao: string | null
+          nome_guerra_2: string | null
+          nome_guerra_3: string | null
           updated_at: string
           user_id: string
         }
@@ -34,9 +34,9 @@ export type Database = {
           horario_fim: string
           horario_inicio: string
           id?: string
-          nome_completo?: string | null
           nome_guerra: string
-          posto_graduacao?: string | null
+          nome_guerra_2?: string | null
+          nome_guerra_3?: string | null
           updated_at?: string
           user_id: string
         }
@@ -49,9 +49,9 @@ export type Database = {
           horario_fim?: string
           horario_inicio?: string
           id?: string
-          nome_completo?: string | null
           nome_guerra?: string
-          posto_graduacao?: string | null
+          nome_guerra_2?: string | null
+          nome_guerra_3?: string | null
           updated_at?: string
           user_id?: string
         }

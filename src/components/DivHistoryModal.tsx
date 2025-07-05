@@ -104,8 +104,8 @@ export default function DiveHistoryModal({ trigger }: DiveHistoryModalProps) {
                           <TableRow className="bg-military-blue/20 hover:bg-military-blue/30">
                             <TableHead className="text-military-gold font-semibold">Equipe</TableHead>
                             <TableHead className="text-military-gold font-semibold">Mergulhador</TableHead>
-                            <TableHead className="text-military-gold font-semibold">Nome Completo</TableHead>
-                            <TableHead className="text-military-gold font-semibold">Posto/Grad.</TableHead>
+                            <TableHead className="text-military-gold font-semibold">Mergulhador 2</TableHead>
+                            <TableHead className="text-military-gold font-semibold">Mergulhador 3</TableHead>
                             <TableHead className="text-military-gold font-semibold">Atividade</TableHead>
                             <TableHead className="text-military-gold font-semibold">Início</TableHead>
                             <TableHead className="text-military-gold font-semibold">Término</TableHead>
@@ -128,10 +128,10 @@ export default function DiveHistoryModal({ trigger }: DiveHistoryModalProps) {
                                   {log.nome_guerra}
                                 </TableCell>
                                 <TableCell className="text-foreground">
-                                  {log.nome_completo || '-'}
+                                  {log.nome_guerra_2 || '-'}
                                 </TableCell>
                                 <TableCell className="text-foreground">
-                                  {log.posto_graduacao || '-'}
+                                  {log.nome_guerra_3 || '-'}
                                 </TableCell>
                                 <TableCell className="text-foreground">
                                   <div className="flex items-center gap-2">

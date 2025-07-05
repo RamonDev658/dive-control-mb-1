@@ -6,8 +6,8 @@ import { useToast } from '@/hooks/use-toast';
 export interface DiveLogData {
   equipe: string;
   nome_guerra: string;
-  nome_completo?: string;
-  posto_graduacao?: string;
+  nome_guerra_2?: string;
+  nome_guerra_3?: string;
   atividade: string;
   horario_inicio: string;
   horario_fim: string;
@@ -19,8 +19,8 @@ export interface DiveLogRecord {
   id: string;
   equipe: string;
   nome_guerra: string;
-  nome_completo?: string;
-  posto_graduacao?: string;
+  nome_guerra_2?: string;
+  nome_guerra_3?: string;
   atividade: string;
   horario_inicio: string;
   horario_fim: string;
@@ -158,8 +158,8 @@ export const useDiveLogs = () => {
             user_id: user.id,
             equipe: log.equipe,
             nome_guerra: log.nome_guerra,
-            nome_completo: log.nome_completo,
-            posto_graduacao: log.posto_graduacao,
+            nome_guerra_2: log.nome_guerra_2,
+            nome_guerra_3: log.nome_guerra_3,
             atividade: log.atividade,
             horario_inicio: log.horario_inicio,
             horario_fim: log.horario_fim,

@@ -99,8 +99,8 @@ export default function DiveControl() {
       const logData = {
         equipe: data.teamName,
         nome_guerra: diver.nome_guerra,
-        nome_completo: diver.role === 'principal' ? data.diverB : '', // Use diverB as full name for principal
-        posto_graduacao: diver.role === 'terceiro' ? data.diverC : '', // Use diverC as rank if it's the third diver
+        nome_guerra_2: diver.role === 'principal' ? data.diverB : '', // Use diverB as second diver name
+        nome_guerra_3: diver.role === 'terceiro' ? data.diverC : '', // Use diverC as third diver name
         atividade: data.activityType,
         horario_inicio: data.startTime.toISOString(),
         horario_fim: data.endTime.toISOString(),
