@@ -135,7 +135,7 @@ const Auth = () => {
           <img 
             src="/lovable-uploads/bd3b769b-6765-45a2-8fb1-d32926a10773.png" 
             alt="DiveControl Logo" 
-            className="w-24 h-24 mx-auto mb-4"
+            className="w-24 h-24 mx-auto mb-4 rounded-[15px]"
           />
           <h1 className="text-3xl font-bold text-foreground drop-shadow-lg mb-2">
             DIVECONTROL_1.0

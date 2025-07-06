@@ -291,13 +291,13 @@ export default function DiveControl() {
                 <img 
                   src="/lovable-uploads/bd3b769b-6765-45a2-8fb1-d32926a10773.png" 
                   alt="DiveControl Logo" 
-                  className="w-24 h-24 md:w-20 md:h-20"
+                  className="w-24 h-24 md:w-20 md:h-20 rounded-[15px]"
                 />
                 <div className="text-center md:text-left">
                   <h1 className="text-2xl md:text-4xl font-bold text-foreground drop-shadow-lg mb-1">
                     DIVECONTROL_1.0
                   </h1>
-                  <p className="text-sm md:text-lg text-foreground/80 drop-shadow">
+                  <p className="text-sm md:text-lg text-muted-foreground drop-shadow">
                     Sistema de Controle de Mergulhos Militares
                   </p>
                 </div>
@@ -379,7 +379,7 @@ export default function DiveControl() {
       {/* Footer */}
       <footer className="bg-gradient-command border-t border-military-gold/20 py-4 mt-8">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-sm text-foreground/80">
+          <p className="text-sm text-muted-foreground">
             TODOS OS DIREITOS RESERVADOS 2025 - DevCA658
           </p>
         </div>
