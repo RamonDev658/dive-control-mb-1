@@ -133,7 +133,7 @@ const Auth = () => {
         {/* Logo */}
         <div className="text-center mb-8">
           <img 
-            src="/lovable-uploads/7032a47b-eff7-4654-889f-3d26c95cb414.png" 
+            src="/lovable-uploads/bd3b769b-6765-45a2-8fb1-d32926a10773.png" 
             alt="DiveControl Logo" 
             className="w-24 h-24 mx-auto mb-4"
           />

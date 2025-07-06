@@ -289,7 +289,7 @@ export default function DiveControl() {
             <div className="text-center flex-1 order-2 md:order-1">
               <div className="flex items-center justify-center gap-4 mb-2 flex-col md:flex-row">
                 <img 
-                  src="/lovable-uploads/7032a47b-eff7-4654-889f-3d26c95cb414.png" 
+                  src="/lovable-uploads/bd3b769b-6765-45a2-8fb1-d32926a10773.png" 
                   alt="DiveControl Logo" 
                   className="w-24 h-24 md:w-20 md:h-20"
                 />
