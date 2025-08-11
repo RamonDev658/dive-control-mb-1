@@ -55,6 +55,7 @@ export default function DiveControl() {
     }
   }, []);
   const [isMobile, setIsMobile] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { toast } = useToast();
   const { user, signOut } = useAuth();
   const { logs, saveDiveLog, saveLogOffline } = useDiveLogs();
@@ -69,6 +70,17 @@ export default function DiveControl() {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Check scroll position for email color change
+  useEffect(() => {
+    const checkScroll = () => {
+      setIsScrolled(window.scrollY > 100);
+    };
+    
+    checkScroll();
+    window.addEventListener('scroll', checkScroll);
+    return () => window.removeEventListener('scroll', checkScroll);
   }, []);
 
   // Initial timer setting: 54 minutes and 45 seconds
@@ -268,7 +280,7 @@ export default function DiveControl() {
           <div className="flex items-center justify-between flex-col md:flex-row gap-4">
             {/* Desktop: User Info on Left */}
             <div className="hidden md:flex items-center gap-4 order-1 md:order-0">
-              <div className="flex items-center gap-2 text-military-gold">
+              <div className={`flex items-center gap-2 transition-colors duration-300 ${isScrolled ? 'text-military-gold' : 'text-black'}`}>
                 <User className="w-5 h-5" />
                 <span className="text-sm font-medium">
                   {user?.email}
@@ -305,7 +317,7 @@ export default function DiveControl() {
 
               {/* Mobile: User Info Below Title */}
               <div className="flex md:hidden items-center justify-center gap-4 mt-4">
-                <div className="flex items-center gap-2 text-military-gold">
+                <div className={`flex items-center gap-2 transition-colors duration-300 ${isScrolled ? 'text-military-gold' : 'text-black'}`}>
                   <User className="w-5 h-5" />
                   <span className="text-sm font-medium">
                     {user?.email}
